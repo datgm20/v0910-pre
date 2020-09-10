@@ -15,6 +15,7 @@ namespace v0910_pre
         int[] vx = new int[10];
         int[] vy = new int[10];
         Label[] labels = new Label[10];
+        string[] labelTexts = new string[10];
         static Random rand = new Random();
 
         public Form1()
@@ -26,6 +27,8 @@ namespace v0910_pre
                 vx[i] = rand.Next(-15, 16);
                 vy[i] = rand.Next(-15, 16);
 
+                labelTexts[i] = "☆";
+
                 labels[i] = new Label();
                 labels[i].AutoSize = true;
                 labels[i].Text = "★";
@@ -33,6 +36,13 @@ namespace v0910_pre
                 labels[i].Left = rand.Next(ClientSize.Width - labels[i].Width);
                 labels[i].Top = rand.Next(ClientSize.Height - labels[i].Height);
                 Controls.Add(labels[i]);
+
+                if (rand.NextDouble() < 0.5)
+                {
+                    string t = labels[i].Text;
+                    labels[i].Text = labelTexts[i];
+                    labelTexts[i] = t;
+                }
             }
         }
 
@@ -40,6 +50,10 @@ namespace v0910_pre
         {
             for (int i = 0; i < 10; i++)
             {
+                string temp = labels[i].Text;
+                labels[i].Text = labelTexts[i];
+                labelTexts[i] = temp;
+
                 labels[i].Left += vx[i];
                 labels[i].Top += vy[i];
 
@@ -58,6 +72,16 @@ namespace v0910_pre
                 else if (labels[i].Bottom > ClientSize.Height)
                 {
                     vy[i] = -Math.Abs(vy[i]);
+                }
+
+                Point mp = PointToClient(MousePosition);
+                if (    (mp.X >= labels[i].Left)
+                    &&  (mp.X < labels[i].Right)
+                    &&  (mp.Y >= labels[i].Top)
+                    &&  (mp.Y < labels[i].Bottom)
+                    )
+                {
+                    labels[i].Visible = false;
                 }
             }
         }
